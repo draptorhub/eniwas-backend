@@ -9,7 +9,7 @@ const sequelize=new Sequelize(
         process.env.db_user,
         process.env.db_password, 
         {
-            host: process.env.host,
+            host: process.env.db_host,
             dialect: 'mysql',
             define:{
                 timestamps: false
