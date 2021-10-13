@@ -22,8 +22,13 @@ controllers.managerAuthorize = async (req, res) => {
             .catch(error => {
               return error;
             }); 
-  
-  res.json({data : data});
+
+  if(data.length>0)
+      res.json({success : true});
+  else
+      res.json({success : false});
+
+      //res.json({data : data});
 
 }
 
