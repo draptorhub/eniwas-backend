@@ -14,6 +14,10 @@ module.exports = function(sequelize, DataTypes) {
 		serviceCost: {
 			type: "DOUBLE",
 			allowNull: true
+		},
+		serviceEnabled: {
+			type: DataTypes.INTEGER,
+			allowNull: true
 		}
 	}, {
 		tableName: 'service_branch'

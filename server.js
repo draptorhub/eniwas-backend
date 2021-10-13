@@ -6,6 +6,7 @@ const bodyParser=require('body-parser')
 
 const owner=require('./src/routes/owner')
 const referrals=require('./src/routes/referrals')
+const referral_branch=require('./src/routes/referral_branch')
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:true}))
@@ -22,6 +23,7 @@ app.use((req, res, next) => {
 
 app.use('/api/owner',owner)
 app.use('/api/referrals',referrals)
+app.use('/api/ref-branch',referral_branch)
 
 app.use('/',(req,res) => {
     res.send("Hello World from node.js server")
