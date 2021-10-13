@@ -5,11 +5,12 @@ const app=express()
 const bodyParser=require('body-parser')
 
 const owner=require('./src/routes/owner')
+const referrals=require('./src/routes/referrals')
 const referral_branch=require('./src/routes/referral_branch')
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:true}))
-app.set('port',process.env.port||5000)
+app.set('port',process.env.port||3000)
 app.use(express.json())
 
 app.use((req, res, next) => {
@@ -21,6 +22,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/api/owner',owner)
+app.use('/api/referrals',referrals)
 app.use('/api/ref-branch',referral_branch)
 
 app.use('/',(req,res) => {
