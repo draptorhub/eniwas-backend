@@ -32,4 +32,27 @@ controllers.managerAuthorize = async (req, res) => {
 
 }
 
+controllers.branchDetails = async (req, res) => {
+
+  let branchId = req.params.bid
+
+  let sql = `select branchName as bname,(select hotelName from hotel 
+             where hotelId = hotelId) as hname,(select mngrName from manager 
+             where mngrId=managerId) as mname from branches b where 
+             branchId='${branchId}';`
+
+  let data = await sequelize.query(sql,{
+              type: sequelize.QueryTypes.SELECT
+            })
+            .then(function(data){
+              return data;
+            })
+            .catch(error => {
+              return error;
+            }); 
+
+      res.json({data : data});
+
+}
+
 module.exports=controllers

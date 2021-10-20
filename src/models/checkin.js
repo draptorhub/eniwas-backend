@@ -24,11 +24,11 @@ module.exports = function(sequelize, DataTypes) {
 			allowNull: true
 		},
 		custNational: {
-			type: DataTypes.STRING(25),
+			type: DataTypes.STRING(3),
 			allowNull: true
 		},
 		custPurpose: {
-			type: DataTypes.STRING(25),
+			type: DataTypes.INTEGER,
 			allowNull: true
 		},
 		custAddr: {
@@ -36,7 +36,8 @@ module.exports = function(sequelize, DataTypes) {
 			allowNull: true
 		},
 		ciDatetime: {
-			type: DataTypes.DATE,
+			type: 'TIMESTAMP',
+			defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
 			allowNull: true
 		},
 		custDays: {
@@ -49,10 +50,6 @@ module.exports = function(sequelize, DataTypes) {
 		},
 		paymentMode: {
 			type: DataTypes.INTEGER,
-			allowNull: true
-		},
-		roomType: {
-			type: DataTypes.STRING(10),
 			allowNull: true
 		},
 		ratePlan: {
