@@ -10,6 +10,7 @@ const referral_branch=require('./src/routes/referral_branch')
 const login=require('./src/routes/login')
 const room=require('./src/routes/room')
 const room_type_branch=require('./src/routes/room_type_branch')
+const checkin=require('./src/routes/checkin')
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:true}))
@@ -30,6 +31,7 @@ app.use('/api/ref-branch',referral_branch)
 app.use('/api/login',login)
 app.use('/api/room',room)
 app.use('/api/roomtypebranch',room_type_branch)
+app.use('/api/checkin',checkin)
 
 app.use('/',(req,res) => {
     res.send("Hello World from node.js server")
