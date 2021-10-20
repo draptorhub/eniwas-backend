@@ -37,8 +37,8 @@ controllers.branchDetails = async (req, res) => {
   let branchId = req.params.bid
 
   let sql = `select branchName as bname,(select hotelName from hotel 
-             where hotelId = hotelId) as hname,(select mngrName from manager 
-             where mngrId=managerId) as mname from branches b where 
+             where hotelId = b.hotelId) as hname,(select mngrName from manager 
+             where mngrId=b.managerId) as mname from branches b where 
              branchId='${branchId}';`
 
   let data = await sequelize.query(sql,{
