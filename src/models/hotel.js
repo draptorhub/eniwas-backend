@@ -12,7 +12,7 @@ module.exports = function(sequelize, DataTypes) {
 			allowNull: true
 		},
 		HotelLogo: {
-			type: "BLOB",
+			type: "TEXT",
 			allowNull: true
 		},
 		ownerId: {
