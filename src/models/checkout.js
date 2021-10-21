@@ -12,7 +12,8 @@ module.exports = function(sequelize, DataTypes) {
 			allowNull: true
 		},
 		codatetime: {
-			type: DataTypes.DATE,
+			type: 'TIMESTAMP',
+			defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
 			allowNull: true
 		},
 		payMode: {

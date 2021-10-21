@@ -1,31 +1,18 @@
 const controllers={}
 
 const sequelize=require('../models/database')
-var table = sequelize.import('../models/checkin')
+var table = sequelize.import('../models/checkout')
 sequelize.sync({force:false})
 
 controllers.create = async (req,res) => {
     
-    console.log(req.body,new Date())
+    //console.log(req.body,new Date())
 
     const data = await table.create({
-      checkinId:'',
-      custName:req.body.cname,
-      custReferral:req.body.cref,
-      custMobile:req.body.cmob,
-      custMail:req.body.cmail,
-      custNational:req.body.cnat,
-      custPurpose:req.body.cpurp,
-      custAddr:req.body.caddr,
-      //ciDatetime:'',
-      //ciDatetime:new Date().toISOString().slice(0,10),
-      custDays:req.body.cdays,
-      custGuest:req.body.cque,
-      paymentMode:req.body.cpay,
-      ratePlan:req.body.rplan,
-      roomNumber:req.body.rnum,
-      branchId:req.body.bid,
-      roomCharge:req.body.rcost,
+      checkOutId:'',
+      checkInId:req.body.ciid,
+      payMode:req.body.paytype,
+      cototamt:req.body.tamt
     })
     .then(function(data){
       return data;
@@ -37,7 +24,7 @@ controllers.create = async (req,res) => {
     // return res
     res.status(200).json({
       success: true,
-      message:"Referral Created.",
+      message:"checkout Created.",
       data: data
     });
 }
@@ -53,33 +40,6 @@ controllers.list = async (req, res) => {
   }); 
 
   res.json({success : true, data : data});
-
-}
-
-//
-
-controllers.getCheckoutData = async (req, res) => {
-
-  let branchId = req.body.bid
-  let roomNum = req.body.rid
-
-  var sql = `select checkinid,(select roomName from rooms where roomId=roomNumber) 
-             as rname,custName,CONCAT("",ciDatetime) as cidt,custAddr,
-             (select refLogo from referrals where reffId=custReferral) as custref,
-             roomCharge from checkin where branchId='${branchId}' and 
-             roomNumber='${roomNum}' order by ciDatetime desc limit 1;`
-
-  let data = await sequelize.query(sql,{
-              type: sequelize.QueryTypes.SELECT
-            })
-            .then(function(data){
-              return data;
-            })
-            .catch(error => {
-              return error;
-            }); 
-
-      res.json({data : data});
 
 }
 
