@@ -17,8 +17,6 @@ controllers.create = async (req,res) => {
       custNational:req.body.cnat,
       custPurpose:req.body.cpurp,
       custAddr:req.body.caddr,
-      //ciDatetime:'',
-      //ciDatetime:new Date().toISOString().slice(0,10),
       custDays:req.body.cdays,
       custGuest:req.body.cque,
       paymentMode:req.body.cpay,
@@ -68,6 +66,77 @@ controllers.getCheckoutData = async (req, res) => {
              (select refLogo from referrals where reffId=custReferral) as custref,
              roomCharge from checkin where branchId='${branchId}' and 
              roomNumber='${roomNum}' order by ciDatetime desc limit 1;`
+
+  let data = await sequelize.query(sql,{
+              type: sequelize.QueryTypes.SELECT
+            })
+            .then(function(data){
+              return data;
+            })
+            .catch(error => {
+              return error;
+            }); 
+
+      res.json({data : data});
+
+}
+
+controllers.getCustomerData = async (req, res) => {
+
+  let branchId = req.body.bid
+  let roomNum = req.body.rid
+
+  var sql = `select checkinid,(select roomName from rooms where roomId=roomNumber) 
+  as rname,roomNumber,custName from checkin where branchId='${branchId}' and 
+  roomNumber='${roomNum}' order by ciDatetime desc limit 1`
+
+  let data = await sequelize.query(sql,{
+              type: sequelize.QueryTypes.SELECT
+            })
+            .then(function(data){
+              return data;
+            })
+            .catch(error => {
+              return error;
+            }); 
+
+      res.json({data : data});
+
+}
+
+controllers.changeRoom = async (req, res) => {
+
+  let custId = req.body.ciid;
+  let branId = req.body.bid;
+  let roomNum = req.body.rid;
+
+  const data = await table.update({
+    roomNumber:roomNum
+  },
+  {
+    where: { 
+      checkinId:custId,
+      branchId:branId
+    }
+  })
+  .then( function(data){
+    return data;
+  })
+  .catch(error => {
+    return error;
+  }) 
+  res.json({success:true, data:data, message:"Room Change Successful."});
+
+}
+
+controllers.getReviseData = async (req, res) => {
+
+  let branchId = req.params.bid
+
+  var sql = `select checkinId,roomNumber,(select roomName from rooms where 
+             roomId=roomNumber) as rname,custName,roomCharge,CONCAT('',ciDatetime) 
+             as cidt from checkin where checkinid not in (select checkinid from checkout) 
+             and branchId='${branchId}' order by ciDatetime desc;`
 
   let data = await sequelize.query(sql,{
               type: sequelize.QueryTypes.SELECT

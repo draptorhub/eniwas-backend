@@ -1,10 +1,11 @@
 const express=require('express')
 const router=express.Router()
-const checkout=require('../controllers/checkout')
+const cards=require('../controllers/card_details')
 
-router.post('/create',checkout.create)
+router.post('/create',cards.create)
+router.post('/createauto',cards.createAuto)
+//router.get('/get/:cid',bills.get)
 // router.get('/list',refBranch.list)
-router.get('/gethistory/:bid',checkout.getHistoryData)
 // router.delete('/delete',refBranch.delete)
 
 module.exports = router
