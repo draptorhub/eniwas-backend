@@ -1,7 +1,7 @@
 const controllers={}
 
 const sequelize=require('../models/database')
-var table = sequelize.import('../models/checkout')
+var table = sequelize.import('../models/card_details')
 sequelize.sync({force:false})
 
 controllers.create = async (req,res) => {
@@ -9,10 +9,8 @@ controllers.create = async (req,res) => {
     //console.log(req.body,new Date())
 
     const data = await table.create({
-      checkOutId:'',
-      checkInId:req.body.ciid,
-      payMode:req.body.paytype,
-      cototamt:req.body.tamt
+      transId:req.body.tid,
+      cardNumber:req.body.cnum
     })
     .then(function(data){
       return data;
@@ -24,9 +22,32 @@ controllers.create = async (req,res) => {
     // return res
     res.status(200).json({
       success: true,
-      message:"checkout Created.",
+      message:"card added",
       data: data
     });
+}
+
+controllers.createAuto = async (req, res) => {
+
+  let customerId = req.body.ciid
+  let cardNumber = req.body.cnum;
+
+  var sql = `insert into card_details values((select billId from bills where 
+             checkinId='${customerId}' order by billDatetime desc 
+             limit 1),'${cardNumber}');`
+
+  let data = await sequelize.query(sql,{
+              type: sequelize.QueryTypes.INSERT
+            })
+            .then(function(data){
+              return data;
+            })
+            .catch(error => {
+              return error;
+            }); 
+
+      res.json({data : data});
+
 }
 
 controllers.list = async (req, res) => {
@@ -47,7 +68,7 @@ controllers.get = async (req, res) => {
 
   const data = await table.findAll({
     where:{
-      reffId:req.params.reffid
+      checkinId:req.params.cid
     }
   })
   .then(function(data){
@@ -58,28 +79,6 @@ controllers.get = async (req, res) => {
   }); 
 
   res.json({success : true, data : data});
-
-}
-
-controllers.getHistoryData = async (req, res) => {
-
-  let branchId = req.params.bid
-
-  var sql = `select (select roomname from rooms where roomid=ci.roomnumber) as rname,ci.custname,co.checkoutid,
-             ci.cidatetime,co.codatetime,DATEDIFF(co.codatetime,ci.cidatetime) as stay,co.cototamt from checkin ci,
-             checkout co where ci.checkinid=co.checkinid and ci.branchid='${branchId}' order by co.codatetime desc;`
-
-  let data = await sequelize.query(sql,{
-              type: sequelize.QueryTypes.SELECT
-            })
-            .then(function(data){
-              return data;
-            })
-            .catch(error => {
-              return error;
-            }); 
-
-      res.json({data : data});
 
 }
 

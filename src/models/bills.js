@@ -15,6 +15,10 @@ module.exports = function(sequelize, DataTypes) {
 			type: DataTypes.INTEGER,
 			allowNull: true
 		},
+		payType: {
+			type: DataTypes.INTEGER,
+			allowNull: true
+		},
 		billAmt: {
 			type: "DOUBLE",
 			allowNull: true
@@ -22,7 +26,12 @@ module.exports = function(sequelize, DataTypes) {
 		checkinId: {
 			type: DataTypes.STRING(20),
 			allowNull: true
-		}
+		},
+		billDatetime: {
+			type: 'TIMESTAMP',
+			defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+			allowNull: true
+		},
 	}, {
 		tableName: 'bills'
 	});
