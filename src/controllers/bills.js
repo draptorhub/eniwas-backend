@@ -63,6 +63,26 @@ controllers.get = async (req, res) => {
 
 }
 
+controllers.addServices = async (req, res) => {
+
+  let appendSql = req.body.stmt;
+
+  var sql = `insert into bills(billId,billDesc,billType,billAmt,checkinId,payType) values ${appendSql}`
+
+  let data = await sequelize.query(sql,{
+              type: sequelize.QueryTypes.INSERT
+            })
+            .then(function(data){
+              return data;
+            })
+            .catch(error => {
+              return error;
+            }); 
+
+      res.json({data : data});
+
+}
+
 controllers.update = async (req,res) => {
     
 
