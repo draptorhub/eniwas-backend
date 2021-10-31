@@ -65,7 +65,7 @@ controllers.getHistoryData = async (req, res) => {
 
   let branchId = req.params.bid
 
-  var sql = `select (select roomname from rooms where roomid=ci.roomnumber) as rname,ci.custname,co.checkoutid,
+  var sql = `select lpad(ROW_NUMBER() OVER (ORDER BY co.codatetime asc),5,'0') as row_num,(select roomname from rooms where roomid=ci.roomnumber) as rname,ci.custname,co.checkoutid,
              ci.cidatetime,co.codatetime,DATEDIFF(co.codatetime,ci.cidatetime) as stay,co.cototamt from checkin ci,
              checkout co where ci.checkinid=co.checkinid and ci.branchid='${branchId}' order by co.codatetime desc;`
 

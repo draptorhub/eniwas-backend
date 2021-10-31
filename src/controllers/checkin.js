@@ -156,7 +156,7 @@ controllers.get = async (req, res) => {
 
   const data = await table.findAll({
     where:{
-      reffId:req.params.reffid
+      checkinId:req.params.ciid
     }
   })
   .then(function(data){
@@ -174,12 +174,21 @@ controllers.update = async (req,res) => {
     
 
     const data = await table.update({
-      reffName:req.body.reffName,
-      refLogo:req.body.refLogo
+      custName:req.body.cname,
+      custReferral:req.body.cref,
+      custMobile:req.body.cmob,
+      custMail:req.body.cmail,
+      custNational:req.body.cnat,
+      custPurpose:req.body.cpurp,
+      custAddr:req.body.caddr,
+      custDays:req.body.cdays,
+      custGuest:req.body.cque,
+      ratePlan:req.body.rplan,
+      roomCharge:req.body.rcost,
     },
     {
       where: { 
-        reffId:req.body.reffId,
+        checkinId:req.body.ciid
       }
     })
     .then( function(data){
