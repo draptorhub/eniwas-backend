@@ -83,6 +83,26 @@ controllers.getHistoryData = async (req, res) => {
 
 }
 
+controllers.getBillNumber = async (req, res) => {
+
+  let branchId = req.params.bid
+
+  var sql = `select lpad(count(*)+1,5,'0') as billnum from checkout co,checkin ci where ci.checkinid=co.checkinid and ci.branchId = '${branchId}';`
+
+  let data = await sequelize.query(sql,{
+              type: sequelize.QueryTypes.SELECT
+            })
+            .then(function(data){
+              return data;
+            })
+            .catch(error => {
+              return error;
+            }); 
+
+      res.json({data : data});
+
+}
+
 controllers.update = async (req,res) => {
     
 

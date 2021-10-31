@@ -62,7 +62,8 @@ controllers.getCheckoutData = async (req, res) => {
   let roomNum = req.body.rid
 
   var sql = `select checkinid,(select roomName from rooms where roomId=roomNumber) 
-             as rname,custName,CONCAT("",ciDatetime) as cidt,custAddr,
+             as rname,(select roomTypeName from room_type where roomTypeId = (select roomType from rooms where roomId=roomNumber)) 
+             as rtype,custName,CONCAT("",ciDatetime) as cidt,custAddr,custGuest,
              (select refLogo from referrals where reffId=custReferral) as custref,
              roomCharge from checkin where branchId='${branchId}' and 
              roomNumber='${roomNum}' order by ciDatetime desc limit 1;`
