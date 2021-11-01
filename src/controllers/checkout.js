@@ -103,6 +103,125 @@ controllers.getBillNumber = async (req, res) => {
 
 }
 
+controllers.searchBillNumber = async (req, res) => {
+
+  let branchId = req.body.bid
+  let billnum = req.body.bnum
+
+  var sql = `select * from (select lpad(ROW_NUMBER() OVER (ORDER BY co.codatetime asc),5,'0') as row_num,
+  (select roomname from rooms where roomid=ci.roomnumber) as rname,ci.custname,co.checkoutid,
+  ci.cidatetime,co.codatetime,DATEDIFF(co.codatetime,ci.cidatetime) as stay,co.cototamt from 
+  checkin ci, checkout co where ci.checkinid=co.checkinid and ci.branchid='${branchId}' order by 
+  co.codatetime desc) t where t.row_num='${billnum}';`
+
+  let data = await sequelize.query(sql,{
+              type: sequelize.QueryTypes.SELECT
+            })
+            .then(function(data){
+              return data;
+            })
+            .catch(error => {
+              return error;
+            }); 
+
+      res.json({data : data});
+
+}
+
+controllers.getCheckedoutData = async (req, res) => {
+
+  let branchId = req.body.bid
+  let checkedoutid = req.body.coid
+
+  var sql = `select checkinid,(select roomTypeName from room_type where roomTypeId = 
+    (select roomType from rooms where roomId=roomNumber)) 
+    as rtype,custAddr,custGuest,roomCharge,(select payMode from checkout where checkoutid='${checkedoutid}') as paymode from checkin where 
+    branchId='${branchId}' and checkinid=(select checkinid from checkout where checkoutid='${checkedoutid}');`
+
+  let data = await sequelize.query(sql,{
+              type: sequelize.QueryTypes.SELECT
+            })
+            .then(function(data){
+              return data;
+            })
+            .catch(error => {
+              return error;
+            }); 
+
+      res.json({data : data});
+
+}
+
+controllers.searchCustomer = async (req, res) => {
+
+  let branchId = req.body.bid
+  let custName = req.body.cname
+
+  var sql = `select * from (select lpad(ROW_NUMBER() OVER (ORDER BY co.codatetime asc),5,'0') as row_num,
+  (select roomname from rooms where roomid=ci.roomnumber) as rname,ci.custname,co.checkoutid,
+  ci.cidatetime,co.codatetime,DATEDIFF(co.codatetime,ci.cidatetime) as stay,co.cototamt from 
+  checkin ci, checkout co where ci.checkinid=co.checkinid and ci.branchid='${branchId}' order by 
+  co.codatetime desc) t where t.custname like '%${custName}%';`
+
+  let data = await sequelize.query(sql,{
+              type: sequelize.QueryTypes.SELECT
+            })
+            .then(function(data){
+              return data;
+            })
+            .catch(error => {
+              return error;
+            }); 
+
+      res.json({data : data});
+
+}
+
+controllers.searchDate = async (req, res) => {
+
+  let branchId = req.body.bid
+  let startDate = req.body.sdate
+  let endDate = req.body.edate
+  let ctype = String(req.body.ctype)=='true'?true:false;
+  console.log("ctype:",ctype,req.body.ctype);
+
+  var sql = `select * from (select lpad(ROW_NUMBER() OVER (ORDER BY co.codatetime asc),5,'0') as row_num,
+  (select roomname from rooms where roomid=ci.roomnumber) as rname,ci.custname,co.checkoutid,
+  ci.cidatetime,co.codatetime,DATEDIFF(co.codatetime,ci.cidatetime) as stay,co.cototamt from 
+  checkin ci, checkout co where ci.checkinid=co.checkinid and ci.branchid='BID-0000000004' order by 
+  co.codatetime desc) t `
+
+  let addString = ``
+
+  //if ctype checkout data
+  if(ctype){
+    if(endDate)
+      addString = `where date(t.codatetime)>='${startDate}' && date(t.codatetime)<='${endDate}';`
+    else
+      addString = `where date(t.codatetime)='${startDate}';`
+  }else{
+    if(endDate)
+      addString = `where date(t.cidatetime)>='${startDate}' && date(t.cidatetime)<='${endDate}';`
+    else
+      addString = `where date(t.cidatetime)='${startDate}';`
+  }
+
+  sql+=addString;
+
+  let data = await sequelize.query(sql,{
+              type: sequelize.QueryTypes.SELECT
+            })
+            .then(function(data){
+              return data;
+            })
+            .catch(error => {
+              return error;
+            }); 
+
+      res.json({data : data});
+
+}
+
 controllers.update = async (req,res) => {
     
 
