@@ -54,8 +54,6 @@ controllers.list = async (req, res) => {
 
 }
 
-//
-
 controllers.getCheckoutData = async (req, res) => {
 
   let branchId = req.body.bid
@@ -65,7 +63,7 @@ controllers.getCheckoutData = async (req, res) => {
              as rname,(select roomTypeName from room_type where roomTypeId = (select roomType from rooms where roomId=roomNumber)) 
              as rtype,custName,CONCAT("",ciDatetime) as cidt,custAddr,custGuest,
              (select refLogo from referrals where reffId=custReferral) as custref,
-             roomCharge from checkin where branchId='${branchId}' and 
+             roomCharge from checkin where branchId='${branchId}' and checkinid not in (select checkinid from checkout) and 
              roomNumber='${roomNum}' order by ciDatetime desc limit 1;`
 
   let data = await sequelize.query(sql,{
