@@ -48,7 +48,10 @@ controllers.get = async (req, res) => {
     where:{
       branchId:req.params.bid
     },
-    attributes: ['roomId','roomName','roomStat']
+    attributes: ['roomId','roomName','roomStat'],
+    order:[
+      ['roomName','ASC']
+    ]
   })
   .then(function(data){
       return data;
@@ -68,7 +71,7 @@ controllers.frontList = async (req, res) => {
   var sql = `select r.roomId,r.roomName,(select roomTypeName from room_type 
              where roomTypeId=r.roomType) as rtname,r.roomType,rtb.roomTypeCost 
              from rooms r,room_type_branch rtb where r.branchId=rtb.branchId 
-             and r.roomType=rtb.roomTypeId and r.branchId='${branchId}';`
+             and r.roomType=rtb.roomTypeId and r.branchId='${branchId}' order by r.roomName;`
 
   let data = await sequelize.query(sql,{
               type: sequelize.QueryTypes.SELECT
