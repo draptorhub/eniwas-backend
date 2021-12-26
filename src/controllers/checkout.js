@@ -65,9 +65,35 @@ controllers.getHistoryData = async (req, res) => {
 
   let branchId = req.params.bid
 
-  var sql = `select lpad(ROW_NUMBER() OVER (ORDER BY co.codatetime asc),5,'0') as row_num,(select roomname from rooms where roomid=ci.roomnumber) as rname,ci.custname,co.checkoutid,
-             ci.cidatetime,co.codatetime,DATEDIFF(co.codatetime,ci.cidatetime) as stay,co.cototamt from checkin ci,
-             checkout co where ci.checkinid=co.checkinid and ci.branchid='${branchId}' order by co.codatetime desc;`
+  var sql = `select * from historydata where branchid='${branchId}' order by codatetime desc;`
+
+  let data = await sequelize.query(sql,{
+              type: sequelize.QueryTypes.SELECT
+            })
+            .then(function(data){
+              return data;
+            })
+            .catch(error => {
+              return error;
+            }); 
+
+      res.json({data : data});
+
+}
+
+controllers.getAnalytics = async (req, res) => {
+
+  let branchId = req.body.bid;
+  let sdate = req.body.sdate;
+  let edate = req.body.edate;
+
+  let sql = ''
+
+  if(edate)
+    sql = `select * from historydata where branchid='${branchId}' and DATE(codatetime) between '${sdate}' and '${edate}' order by codatetime desc;`
+  else
+    sql = `select * from historydata where branchid='${branchId}' and DATE(codatetime)='${sdate}' order by codatetime desc;`
+    
 
   let data = await sequelize.query(sql,{
               type: sequelize.QueryTypes.SELECT
@@ -108,11 +134,7 @@ controllers.searchBillNumber = async (req, res) => {
   let branchId = req.body.bid
   let billnum = req.body.bnum
 
-  var sql = `select * from (select lpad(ROW_NUMBER() OVER (ORDER BY co.codatetime asc),5,'0') as row_num,
-  (select roomname from rooms where roomid=ci.roomnumber) as rname,ci.custname,co.checkoutid,
-  ci.cidatetime,co.codatetime,DATEDIFF(co.codatetime,ci.cidatetime) as stay,co.cototamt from 
-  checkin ci, checkout co where ci.checkinid=co.checkinid and ci.branchid='${branchId}' order by 
-  co.codatetime desc) t where t.row_num='${billnum}';`
+  var sql = `select * from historydata h where binary branchid= binary '${branchId}' and binary row_num= binary '${billnum}' order by codatetime desc;`
 
   let data = await sequelize.query(sql,{
               type: sequelize.QueryTypes.SELECT
@@ -135,7 +157,7 @@ controllers.getCheckedoutData = async (req, res) => {
 
   var sql = `select checkinid,(select roomTypeName from room_type where roomTypeId = 
     (select roomType from rooms where roomId=roomNumber)) 
-    as rtype,custAddr,custGuest,roomCharge,(select payMode from checkout where checkoutid='${checkedoutid}') as paymode from checkin where 
+    as rtype,custAddr,custGuest,roomCharge,(select reffName from referrals where reffId=custReferral) as custref,(select payMode from checkout where checkoutid='${checkedoutid}') as paymode from checkin where 
     branchId='${branchId}' and checkinid=(select checkinid from checkout where checkoutid='${checkedoutid}');`
 
   let data = await sequelize.query(sql,{
@@ -157,11 +179,8 @@ controllers.searchCustomer = async (req, res) => {
   let branchId = req.body.bid
   let custName = req.body.cname
 
-  var sql = `select * from (select lpad(ROW_NUMBER() OVER (ORDER BY co.codatetime asc),5,'0') as row_num,
-  (select roomname from rooms where roomid=ci.roomnumber) as rname,ci.custname,co.checkoutid,
-  ci.cidatetime,co.codatetime,DATEDIFF(co.codatetime,ci.cidatetime) as stay,co.cototamt from 
-  checkin ci, checkout co where ci.checkinid=co.checkinid and ci.branchid='${branchId}' order by 
-  co.codatetime desc) t where t.custname like '%${custName}%';`
+  var sql = `select * from historydata where binary branchid='${branchId}' and binary
+  custname like '%${custName}%' order by codatetime desc;`
 
   let data = await sequelize.query(sql,{
               type: sequelize.QueryTypes.SELECT
