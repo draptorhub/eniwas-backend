@@ -202,12 +202,11 @@ controllers.searchDate = async (req, res) => {
   let startDate = req.body.sdate
   let endDate = req.body.edate
   let ctype = String(req.body.ctype)=='true'?true:false;
-  console.log("ctype:",ctype,req.body.ctype);
 
   var sql = `select * from (select lpad(ROW_NUMBER() OVER (ORDER BY co.codatetime asc),5,'0') as row_num,
   (select roomname from rooms where roomid=ci.roomnumber) as rname,ci.custname,co.checkoutid,
   ci.cidatetime,co.codatetime,DATEDIFF(co.codatetime,ci.cidatetime) as stay,co.cototamt from 
-  checkin ci, checkout co where ci.checkinid=co.checkinid and ci.branchid='BID-0000000004' order by 
+  checkin ci, checkout co where ci.checkinid=co.checkinid and ci.branchid='${branchId}' order by 
   co.codatetime desc) t `
 
   let addString = ``
